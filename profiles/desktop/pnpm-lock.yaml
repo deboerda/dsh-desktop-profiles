@@ -1,0 +1,19 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: false
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      dsh-token-saver:
+        specifier: link:E:/deepseekharness/dsh-token-saver
+        version: link:E:/deepseekharness/dsh-token-saver
+      dsh-tongyuan-usage:
+        specifier: link:E:/deepseekharness/dsh-tongyuan-usage
+        version: link:E:/deepseekharness/dsh-tongyuan-usage
+      dsh-unity-insight:
+        specifier: link:../unity/packages/dsh-unity-insight
+        version: link:../unity/packages/dsh-unity-insight

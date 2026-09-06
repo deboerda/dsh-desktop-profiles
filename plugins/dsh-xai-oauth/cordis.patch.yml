@@ -1,0 +1,11 @@
+# dsh-xai-oauth bundle layer: point the xai route at the subscription access
+# token this plugin injects into the credentials seam, and mount the plugin.
+- id: llm-pi-ai
+  config:
+    providers:
+      xai:
+        apiKeyEnv: XAI_OAUTH_TOKEN
+
+- insert:
+    - id: xai-oauth
+      name: dsh-xai-oauth

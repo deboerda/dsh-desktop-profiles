@@ -1,0 +1,51 @@
+{
+  "name": "dsh-xai-oauth",
+  "version": "0.1.1",
+  "description": "xAI (Grok/X subscription) OAuth login + sidebar usage chip for DeepSeek Harness",
+  "license": "MIT",
+  "keywords": [
+    "deepseek-harness",
+    "dsh-plugin",
+    "xai",
+    "grok",
+    "oauth",
+    "supergrok"
+  ],
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-ui-settings",
+        "@deepseek-ai/dsh-client-ui-sidebar"
+      ],
+      "platform": "web"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-credentials": "^0.1.0-rc.5"
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh-atomic-write": "^0.1.0-rc.5",
+    "@deepseek-ai/dsh-home-paths": "^0.1.0-rc.5",
+    "@deepseek-ai/dsh-credentials": "^0.1.0-rc.5",
+    "@deepseek-ai/schemastery": "^3.18.1"
+  }
+}

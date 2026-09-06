@@ -1,0 +1,9 @@
+# dsh-tabbit-search: host-plane default web research via Tabbit AI newtab search.
+# Idle cost is only a tool schema + short prompt section; Tabbit starts on demand.
+- insert:
+    - id: tabbit-search
+      name: dsh-tabbit-search
+      config:
+        maxWaitMs: 90000
+        toolTimeoutMs: 120000
+        keepTabs: true

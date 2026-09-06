@@ -1,0 +1,26 @@
+# Unity profile user patch layer (applied after bundle patches).
+#
+# Default session preset is the user-authored unity-cowork copy of standard.
+# Live Unity MCP is registered with failOnStartupError: false so the profile
+# still boots when Tuanjie/Unity is closed. Framing adapter translates DSH
+# Content-Length MCP ↔ Codely FastMCP NDJSON. Project path is resolved at
+# spawn (last remembered workspace or UNITY_PROJECT_PATH), never frozen.
+
+- id: agent-presets
+  config:
+    default: unity-cowork
+    includeShippedRoot: true
+    includeUserRoot: true
+    roots: []
+
+- insert:
+    - id: mcp-unity
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: unity
+        transport: stdio
+        command: !!js process.execPath
+        args:
+          - !!js "process.getBuiltinModule('node:url').fileURLToPath(new URL('packages/dsh-unity-insight/bin/mcp-ndjson-adapter.mjs', baseUrl))"
+        failOnStartupError: false
+        toolCallTimeoutMs: 120000

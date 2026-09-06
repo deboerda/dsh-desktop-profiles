@@ -1,0 +1,22 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: false
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      dsh-tabbit-search:
+        specifier: link:E:/deepseekharness/dsh-tabbit-search
+        version: link:E:/deepseekharness/dsh-tabbit-search
+      dsh-tongyuan-usage:
+        specifier: link:E:/deepseekharness/dsh-tongyuan-usage
+        version: link:E:/deepseekharness/dsh-tongyuan-usage
+      dsh-unity-insight:
+        specifier: link:./packages/dsh-unity-insight
+        version: link:packages/dsh-unity-insight
+      dsh-xai-oauth:
+        specifier: link:E:/deepseekharness/dsh-xai-oauth
+        version: link:E:/deepseekharness/dsh-xai-oauth

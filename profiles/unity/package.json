@@ -1,0 +1,24 @@
+{
+  "name": "dsh-profile-unity",
+  "private": true,
+  "description": "Dedicated Unity / Tuanjie profile for DSH Desktop. Insight VFS tools resolve the project from the current session workspace.",
+  "dependencies": {
+    "dsh-unity-insight": "link:./packages/dsh-unity-insight",
+    "dsh-xai-oauth": "link:../../plugins/dsh-xai-oauth",
+    "dsh-tongyuan-usage": "link:../../plugins/dsh-tongyuan-usage",
+    "dsh-tabbit-search": "link:../../plugins/dsh-tabbit-search"
+  },
+  "dsh": {
+    "profile": {
+      "bundles": [
+        "@deepseek-ai/dsh-base",
+        "@deepseek-ai/dsh-web-app",
+        "dsh-unity-insight",
+        "dsh-xai-oauth",
+        "dsh-tongyuan-usage",
+        "dsh-tabbit-search"
+      ],
+      "patchReload": "live"
+    }
+  }
+}

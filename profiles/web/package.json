@@ -1,0 +1,42 @@
+{
+  "name": "dsh-profile-web",
+  "private": true,
+  "dependencies": {
+    "@eqman00003/dsh-office-com": "github:wly8691-jpg/dsh-office-com#main",
+    "@huanlin/dsh-plugin-better-sidebar-plugin-office": "github:HuanLinOTO/dsh-plugin-better-sidebar-plugin-office",
+    "dsh-better-sidebar": "0.17.1",
+    "dsh-computer-use-win": "github:Yu-tao-Li/dsh-computer-use-win",
+    "dsh-ds-attach": "github:wqx-txdsyl/dsh-ds-attach",
+    "dsh-excel-chat": "^0.34.1",
+    "dsh-pdf-reader": "^0.2.0",
+    "dsh-tabbit-search": "link:../../plugins/dsh-tabbit-search",
+    "dsh-tongyuan-usage": "link:../../plugins/dsh-tongyuan-usage",
+    "dsh-unity-insight": "link:../unity/packages/dsh-unity-insight",
+    "dsh-univer-office": "0.2.13",
+    "dsh-workspace-search": "github:tsonglew/dsh-workspace-search",
+    "dsh-xai-oauth": "link:../../plugins/dsh-xai-oauth",
+    "dsh-zagens-office": "github:didclawapp-ai/DSH-Office"
+  },
+  "dsh": {
+    "profile": {
+      "bundles": [
+        "@deepseek-ai/dsh-base",
+        "@deepseek-ai/dsh-web-app",
+        "dsh-xai-oauth",
+        "dsh-tongyuan-usage",
+        "dsh-computer-use-win",
+        "dsh-tabbit-search",
+        "dsh-better-sidebar",
+        "dsh-zagens-office",
+        "dsh-excel-chat",
+        "dsh-pdf-reader",
+        "dsh-ds-attach",
+        "@eqman00003/dsh-office-com",
+        "dsh-univer-office",
+        "dsh-workspace-search",
+        "@huanlin/dsh-plugin-better-sidebar-plugin-office",
+        "dsh-unity-insight"
+      ]
+    }
+  }
+}

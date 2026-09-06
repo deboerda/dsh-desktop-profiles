@@ -1,0 +1,11 @@
+# dsh-token-saver: shrink the stable prompt-cache prefix (tool schemas + bulky
+# unused families) without unregistering host tools. Spill override lives in
+# the profile patch so it is easy to tune.
+- insert:
+    - id: token-saver
+      name: dsh-token-saver
+      config:
+        slimSchemas: true
+        deferFamilies: true
+        slimCordisPrompt: true
+        maxDescriptionChars: 220

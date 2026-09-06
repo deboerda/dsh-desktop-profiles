@@ -1,0 +1,5 @@
+# Host-plane Unity Insight tools. Project root is resolved per tool call
+# from the session workspace (walk up to ProjectSettings/ProjectVersion.txt).
+- insert:
+    - id: unity-insight
+      name: dsh-unity-insight
