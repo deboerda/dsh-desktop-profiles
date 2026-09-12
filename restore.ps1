@@ -33,6 +33,7 @@ foreach ($name in @("web", "desktop", "unity")) {
   Copy-Dir (Join-Path $RepoRoot "profiles\$name") (Join-Path $profileDst $name)
 }
 Copy-Dir (Join-Path $RepoRoot "agent-presets\unity-cowork") (Join-Path $presetDst "unity-cowork")
+Copy-Dir (Join-Path $RepoRoot "agent-presets\local-qwen-app") (Join-Path $presetDst "local-qwen-app")
 
 $example = Join-Path $RepoRoot "settings.example.yaml"
 $settings = Join-Path $DshHome "settings.yaml"
@@ -50,6 +51,7 @@ version: 1
 refs:
   TONGYUAN_API_KEY: REPLACE_ME
   LOCAL_IQ3_API_KEY: local-iq3
+  LOCAL_QWEN_API_KEY: local-qwen
 records: {}
 "@ | Set-Content -Path $cred -Encoding utf8
   Write-Host "Created $cred — fill TONGYUAN_API_KEY, then login xAI in the app."

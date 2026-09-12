@@ -10,3 +10,23 @@
       - !!js "process.getBuiltinModule('node:url').fileURLToPath(new URL('node_modules/dsh-computer-use-win/mcp/server.mjs', baseUrl))"
     toolCallTimeoutMs: 60000
     failOnStartupError: false
+
+- insert:
+    - id: win-job-runner-fix
+      name: dsh-win-job-runner-fix
+
+- id: token-saver
+  config:
+    slimSchemas: true
+    deferFamilies: true
+    slimCordisPrompt: true
+    compactRuntimeTool: true
+    deferUnlisted: true
+    maxDescriptionChars: 80
+
+- id: agent-presets
+  config:
+    default: local-qwen-app
+    includeShippedRoot: true
+    includeUserRoot: true
+    roots: []

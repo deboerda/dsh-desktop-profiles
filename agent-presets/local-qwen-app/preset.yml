@@ -1,0 +1,2 @@
+name: Local Qwen 应用开发 (32K)
+description: 用本机 llama-server 上的 Qwen3.6-35B-A3B IQ4_XS 在 DSH 里做完整应用。32K 窗口、短宪法、工作集≤4 文件、外置记忆。请选择模型 Qwen3.6 35B-A3B IQ4_XS (32K local)，并保持 http://127.0.0.1:8080 可用。

@@ -1,14 +1,13 @@
-# Copy to %USERPROFILE%\.dsh\settings.yaml if you do not already have one.
-# Do not put API keys here. Store them in %USERPROFILE%\.dsh\.credentials.yaml
-# (see restore.ps1 comments).
+# Copy/merge into %DSH_HOME%/settings.yaml. No API keys here.
+# Secrets go in .credentials.yaml (see restore.ps1).
 
 ui-onboarding:
   welcomeNoticeVersion: 2026-08-13.1
 agent-presets:
-  default: cordis
+  default: local-qwen-app
 agent-default-model:
-  provider: xai
-  model: grok-4.6
+  provider: local-qwen
+  model: qwen3.6-35b-a3b-iq4xs
 llm-pi-ai:
   providers:
     tongyuan:
@@ -60,6 +59,32 @@ llm-pi-ai:
           name: Kimi K3
         - id: minimax-m2.7
           name: MiniMax M2.7
+    local-qwen:
+      displayName: Local Qwen3.6 (llama.cpp)
+      api: openai-completions
+      baseURL: http://127.0.0.1:8080/v1
+      apiKeyEnv: LOCAL_QWEN_API_KEY
+      timeoutMs: 600000
+      streamIdleTimeoutMs: 300000
+      defaultContextWindow: 32768
+      defaultMaxTokens: 8192
+      defaultInput:
+        - text
+      compat:
+        supportsStore: false
+        supportsDeveloperRole: false
+        supportsReasoningEffort: false
+        maxTokensField: max_tokens
+        supportsStrictMode: false
+        supportsLongCacheRetention: false
+        thinkingFormat: qwen-chat-template
+        requiresThinkingAsText: true
+        chatTemplateKwargs:
+          enable_thinking: false
+      models:
+        - id: qwen3.6-35b-a3b-iq4xs
+          name: Qwen3.6 35B-A3B IQ4_XS (32K local)
+          reasoningEfforts: false
 dsh-desktop:
   mode: compatibility
   macosMaterial: transparent
@@ -72,3 +97,18 @@ dsh-desktop-notifications:
   notifyOnTurnFailure: true
   notifyOnJobCompletion: true
   notifyOnJobFailure: true
+dsh-community-market:
+  sources:
+    - sourceRecordId: builtin-dshfind
+      registrationKind: built-in
+      adapterId: market.dshfind-v1
+      providerId: com.dshfind.catalog
+      builtInProviderKey: dshfind
+      enabled: true
+      order: 0
+    - sourceRecordId: builtin-dsh-1024store
+      registrationKind: built-in
+      adapterId: market.dsh-1024store-v2
+      providerId: com.deepseek1024.catalog
+      builtInProviderKey: dsh-1024store
+      enabled: false

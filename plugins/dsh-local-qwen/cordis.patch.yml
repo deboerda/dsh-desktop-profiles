@@ -1,0 +1,7 @@
+- insert:
+    - id: local-qwen
+      name: dsh-local-qwen
+      config:
+        controlPort: 1459
+        llamaRoot: E:\\AI\\LLM
+        healthUrl: http://127.0.0.1:8080/health

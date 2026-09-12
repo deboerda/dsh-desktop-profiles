@@ -21,10 +21,10 @@ const FAMILY_SECTION = 'token-saver:deferred-families'
 const CORDIS_SECTION = 'tool:cordis'
 const USER_TEXT_CAP = 12_000
 
-/** @typedef {'excel' | 'office' | 'univer' | 'pdf' | 'wincu'} FamilyId */
+/** @typedef {'excel' | 'office' | 'univer' | 'pdf' | 'wincu' | 'unity' | 'web' | 'agent' | 'sidebar'} FamilyId */
 
 /** @type {readonly FamilyId[]} */
-const FAMILY_IDS = ['excel', 'office', 'univer', 'pdf', 'wincu']
+const FAMILY_IDS = ['excel', 'office', 'univer', 'pdf', 'wincu', 'unity', 'web', 'agent', 'sidebar']
 
 /** @type {Record<FamilyId, { label: string, match: (name: string) => boolean, keywords: RegExp, sections: string[] }>} */
 const FAMILIES = {
@@ -58,6 +58,30 @@ const FAMILIES = {
     keywords: /\b(wincu|computer.?use|uia|wecom)\b|企业微信|桌面自动化|窗口快照/i,
     sections: [],
   },
+  unity: {
+    label: 'Unity / Tuanjie Insight (unity_*, vfs_*)',
+    match: (name) => name.startsWith('unity_') || name.startsWith('vfs_'),
+    keywords: /\b(unity_|vfs_|tuanjie|prefab|GameObject)\b/i,
+    sections: [],
+  },
+  web: {
+    label: 'Web search / fetch / Tabbit',
+    match: (name) => name.startsWith('web_') || name.startsWith('tabbit'),
+    keywords: /\b(web_search|web_fetch|tabbit|search the web)\b/i,
+    sections: [],
+  },
+  agent: {
+    label: 'Subagents / goals / ralph / workflows',
+    match: (name) => /^(subagent|ralph|create_goal|update_goal|get_goal|exit_plan_mode|interrupt_agent|send_message)/.test(name) || name.startsWith('workflow'),
+    keywords: /\b(subagent|ralph|create_goal|workflow)\b/i,
+    sections: [],
+  },
+  sidebar: {
+    label: 'Better-sidebar terminal / sidebar_open',
+    match: (name) => name.startsWith('sidebar_') || name.startsWith('terminal_'),
+    keywords: /\b(sidebar_open|terminal_)\b/i,
+    sections: [],
+  },
 }
 
 const CORDIS_SHORT = [
@@ -71,11 +95,63 @@ const CORDIS_SHORT = [
 ].join('\n')
 
 /** Schemastery config for the host row. */
+const HOST_TOOLS_SECTION = 'token-saver:host-tools'
+const CORE_NAME_RE = /^(run_code|enable_tools|skill|read|write|edit|glob|grep|pwsh|bash|todo_write|ask_user_question|present)$/i
+const CORE_PREFIXES = ['job_', 'todo']
+
+function isCoreTool(name) {
+  const n = String(name || '')
+  if (CORE_NAME_RE.test(n)) return true
+  const lower = n.toLowerCase()
+  return CORE_PREFIXES.some((p) => lower.startsWith(p))
+}
+
+function compactRuntimeToolSchema(tool) {
+  return {
+    ...tool,
+    description: 'Run async TypeScript. Call await tools.name(args) for host tools listed in the Host tools section. Do not expand unused families. Always pass description.',
+    parameters: {
+      type: 'object',
+      properties: {
+        code: { type: 'string' },
+        description: { type: 'string' },
+      },
+      required: ['code', 'description'],
+    },
+  }
+}
+
+function compactShellToolSchema(tool) {
+  return {
+    ...tool,
+    description: 'Run a shell command. Required args: command (the script) AND description (5-10 word English phrase). Never omit description.',
+    parameters: {
+      type: 'object',
+      properties: {
+        command: { type: 'string' },
+        description: { type: 'string' },
+        timeoutMs: { type: 'number' },
+        workdir: { type: 'string' },
+        run_in_background: { type: 'boolean' },
+      },
+      required: ['command', 'description'],
+    },
+  }
+}
+
+function compactNamedDescriptionTool(tool) {
+  if (tool.name === 'run_code') return compactRuntimeToolSchema(tool)
+  if (tool.name === 'pwsh' || tool.name === 'bash') return compactShellToolSchema(tool)
+  return tool
+}
+
 export const Config = z.object({
   slimSchemas: z.boolean().default(true),
   deferFamilies: z.boolean().default(true),
   slimCordisPrompt: z.boolean().default(true),
-  maxDescriptionChars: z.number().default(220),
+  compactRuntimeTool: z.boolean().default(true),
+  deferUnlisted: z.boolean().default(false),
+  maxDescriptionChars: z.number().default(120),
 })
 
 /**
@@ -108,8 +184,12 @@ function slimValue(value, depth, maxDescriptionChars) {
   const out = {}
   for (const [key, child] of Object.entries(value)) {
     if (key === 'examples' || key === 'title' || key === 'default') continue
-    if (key === 'description') {
-      if (depth === 0 && typeof child === 'string' && child.length > 0) {
+    // Only strip JSON-Schema *annotations* (string-valued "description").
+    // A property literally named description (pwsh, run_code, present.files)
+    // is an object schema — dropping it leaves required:["description"] with
+    // type {}, and local models then omit the argument forever.
+    if (key === 'description' && typeof child === 'string') {
+      if (depth === 0 && child.length > 0) {
         out.description = firstSentence(child, maxDescriptionChars)
       }
       continue
@@ -230,7 +310,7 @@ function detectFamilies(agent, pinned) {
 function catalogText(enabled, tools) {
   const enabledSet = new Set(enabled)
   const lines = [
-    'Bulky tool families are deferred in this session to cut prompt-cache tokens. Core tools stay available. Once a family is enabled it stays enabled for cache stability.',
+    'Codex-style catalog: core coding tools stay (read/write/edit/grep/glob/pwsh/todo/skill/jobs/run_code). Bulky families are deferred. Once enabled they stay enabled for cache stability.',
   ]
   for (const id of FAMILY_IDS) {
     const present = tools.some((tool) => FAMILIES[id].match(tool.name))
@@ -252,9 +332,11 @@ export function apply(ctx, config = {}) {
   const slimSchemas = config.slimSchemas !== false
   const deferFamilies = config.deferFamilies !== false
   const slimCordisPrompt = config.slimCordisPrompt !== false
+  const compactRuntimeTool = config.compactRuntimeTool !== false
+  const deferUnlisted = config.deferUnlisted === true
   const maxDescriptionChars = Number(config.maxDescriptionChars) > 0
     ? Number(config.maxDescriptionChars)
-    : 220
+    : 120
 
   /** @type {WeakMap<object, Set<FamilyId>>} */
   const pinnedByAgent = new WeakMap()
@@ -286,12 +368,19 @@ export function apply(ctx, config = {}) {
     let tools = originalTools
     if (deferFamilies) {
       tools = originalTools.filter((tool) => {
+        if (isCoreTool(tool.name)) return true
         const family = familyOf(tool.name)
-        return family === undefined || enabled.has(family)
+        if (family !== undefined) return enabled.has(family)
+        return !deferUnlisted
       })
     }
+    if (compactRuntimeTool) {
+      tools = tools.map((tool) => compactNamedDescriptionTool(tool))
+    }
     if (slimSchemas) {
-      tools = tools.map((tool) => slimTool(tool, maxDescriptionChars))
+      tools = tools.map((tool) => compactRuntimeTool && (tool.name === 'run_code' || tool.name === 'pwsh' || tool.name === 'bash')
+        ? tool
+        : slimTool(tool, maxDescriptionChars))
     }
 
     let sections = Array.isArray(assembled.sections) ? assembled.sections : []
@@ -315,6 +404,19 @@ export function apply(ctx, config = {}) {
       const entry = { name: FAMILY_SECTION, text: catalog }
       if (existing >= 0) sections = sections.map((section, index) => index === existing ? entry : section)
       else sections = [...sections, entry]
+      const coreNames = tools.map((tool) => tool.name).filter((name) => isCoreTool(name))
+      const otherNames = tools.map((tool) => tool.name).filter((name) => !isCoreTool(name) && name !== 'run_code')
+      const hostText = [
+        '# Host tools (compact)',
+        'Core always-on: ' + (coreNames.join(', ') || '(none)'),
+        otherNames.length ? ('Also this turn: ' + otherNames.slice(0, 40).join(', ')) : '',
+        'pwsh/bash/run_code ALWAYS require description (short English phrase) plus command/code. Type is string, never omit.',
+        'If using run_code, call await tools.<name>(args) for those names only.',
+      ].filter(Boolean).join('\n')
+      const hostIdx = sections.findIndex((section) => section.name === HOST_TOOLS_SECTION)
+      const hostEntry = { name: HOST_TOOLS_SECTION, text: hostText }
+      if (hostIdx >= 0) sections = sections.map((section, index) => index === hostIdx ? hostEntry : section)
+      else sections = [...sections, hostEntry]
     }
 
     return {
@@ -327,7 +429,7 @@ export function apply(ctx, config = {}) {
   if (deferFamilies) {
     ctx.tools.register(defineTool({
       name: ENABLE_TOOL,
-      description: 'Load full schemas for deferred bulky tool families (excel, office, univer, pdf, wincu) in this session. Call this before using those tools if they are listed as deferred. Families stay enabled afterwards for prompt-cache stability.',
+      description: 'Load full schemas for deferred bulky families (excel, office, univer, pdf, wincu, unity). Core coding tools stay loaded. Families stay enabled afterwards.',
       parameters: {
         families: {
           type: 'array',
@@ -337,6 +439,13 @@ export function apply(ctx, config = {}) {
             type: 'string',
             enum: [...FAMILY_IDS],
           },
+        },
+      },
+      output: {
+        schema: { type: 'json' },
+        render(_args, value) {
+          if (value && typeof value === 'object' && typeof value.note === 'string') return value.note
+          try { return JSON.stringify(value) } catch { return String(value) }
         },
       },
       async execute(args, exec) {

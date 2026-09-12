@@ -8,7 +8,7 @@ No API keys, OAuth tokens, sessions, or credentials are stored here.
 
 | Profile | Bundles |
 |---|---|
-| `web` | xAI OAuth + Tongyuan usage, Tabbit search, office plugins, computer-use, attach, unity-insight |
+| `web` | local Qwen 32K preset, token-saver, dsh-local-qwen, xAI, Tongyuan, Tabbit, office, computer-use, attach, unity-insight |
 | `desktop` | token-saver, Tongyuan usage, unity-insight |
 | `unity` | Unity Insight + MCP, xAI, Tongyuan usage, Tabbit search |
 
@@ -18,9 +18,10 @@ Local plugins (copied into `plugins/`):
 - `dsh-tongyuan-usage`
 - `dsh-tabbit-search`
 - `dsh-token-saver`
+- `dsh-local-qwen`
 - `dsh-unity-insight` (under `profiles/unity/packages/`)
 
-User agent preset: `agent-presets/unity-cowork`
+User agent presets: `agent-presets/unity-cowork`, `agent-presets/local-qwen-app`
 
 ## Restore on a new PC
 
@@ -42,7 +43,7 @@ powershell -ExecutionPolicy Bypass -File .\restore.ps1
 - `.credentials.yaml` secrets
 - `xai-oauth.json`
 - session logs, attachments, telemetry
-- machine-local llama.cpp (`local-iq3`) endpoint
+- machine-local llama.cpp (`local-iq3` / `local-qwen`) endpoint — set `baseURL` to this PC's llama-server
 
 ## Update this backup
 

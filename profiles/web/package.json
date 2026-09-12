@@ -10,10 +10,11 @@
     "dsh-excel-chat": "^0.34.1",
     "dsh-pdf-reader": "^0.2.0",
     "dsh-tabbit-search": "link:../../plugins/dsh-tabbit-search",
+    "dsh-token-saver": "link:../../plugins/dsh-token-saver",
     "dsh-tongyuan-usage": "link:../../plugins/dsh-tongyuan-usage",
+    "dsh-local-qwen": "link:../../plugins/dsh-local-qwen",
     "dsh-unity-insight": "link:../unity/packages/dsh-unity-insight",
     "dsh-univer-office": "0.2.13",
-    "dsh-workspace-search": "github:tsonglew/dsh-workspace-search",
     "dsh-xai-oauth": "link:../../plugins/dsh-xai-oauth",
     "dsh-zagens-office": "github:didclawapp-ai/DSH-Office"
   },
@@ -24,8 +25,10 @@
         "@deepseek-ai/dsh-web-app",
         "dsh-xai-oauth",
         "dsh-tongyuan-usage",
+        "dsh-local-qwen",
         "dsh-computer-use-win",
         "dsh-tabbit-search",
+        "dsh-token-saver",
         "dsh-better-sidebar",
         "dsh-zagens-office",
         "dsh-excel-chat",
@@ -33,7 +36,6 @@
         "dsh-ds-attach",
         "@eqman00003/dsh-office-com",
         "dsh-univer-office",
-        "dsh-workspace-search",
         "@huanlin/dsh-plugin-better-sidebar-plugin-office",
         "dsh-unity-insight"
       ]

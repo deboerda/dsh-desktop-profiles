@@ -8,4 +8,4 @@
         slimSchemas: true
         deferFamilies: true
         slimCordisPrompt: true
-        maxDescriptionChars: 220
+        maxDescriptionChars: 120
