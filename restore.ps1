@@ -75,7 +75,29 @@ foreach ($name in @("web", "desktop", "unity")) {
   }
 }
 
+# Link every local plugin under plugins\ into each profile node_modules. `pnpm install`
+# only restores what each package.json declares; plugins dropped in by hand (and bundled
+# packages such as the OpenViking memory plugins) need an explicit link.
+$linked = 0
+foreach ($plugin in (Get-ChildItem $pluginDst -Directory -ErrorAction SilentlyContinue)) {
+  foreach ($name in @("web", "desktop", "unity")) {
+    $nm = Join-Path (Join-Path $profileDst $name) "node_modules"
+    if (-not (Test-Path $nm)) { continue }
+    $link = Join-Path $nm $plugin.Name
+    if (Test-Path $link) { continue }
+    try {
+      New-Item -ItemType Junction -Path $link -Target $plugin.FullName -ErrorAction Stop | Out-Null
+      $linked++
+    } catch {
+      Write-Warning ("could not link " + $plugin.Name + " into " + $name + ": " + $_.Exception.Message)
+    }
+  }
+}
+Write-Host ("Linked $linked local plugin(s) into profile node_modules.")
+
 Write-Host ""
 Write-Host "Restore done. Restart DSH Desktop, then pick profile web / desktop / unity."
+Write-Host "OpenViking memory (optional): copy the 3 packages listed in README into profile node_modules"
+Write-Host "  and replace <OPENVIKING_USER_KEY> in the profile patches."
 Write-Host "xAI: Settings -> xAI (Grok/X) login."
 Write-Host "Tongyuan: put TONGYUAN_API_KEY in $cred"

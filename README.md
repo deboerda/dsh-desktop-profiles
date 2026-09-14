@@ -19,7 +19,10 @@ Local plugins (copied into `plugins/`):
 - `dsh-tabbit-search`
 - `dsh-token-saver`
 - `dsh-local-qwen`
+- `dsh-win-job-runner-fix`
 - `dsh-unity-insight` (under `profiles/unity/packages/`)
+
+三个 profile 还都挂了 **OpenViking 长期记忆**（见下方专节）。
 
 User agent presets: `agent-presets/unity-cowork`, `agent-presets/local-qwen-app`
 
@@ -44,6 +47,28 @@ powershell -ExecutionPolicy Bypass -File .\restore.ps1
 - `xai-oauth.json`
 - session logs, attachments, telemetry
 - machine-local llama.cpp (`local-iq3` / `local-qwen`) endpoint — set `baseURL` to this PC's llama-server
+
+## OpenViking 长记忆（可选，2026-09-14 起）
+
+三个 profile 的 `cordis.patch.yml` 末尾各有一段 `- insert:`，挂载两个本机插件：
+
+| 插件 | 作用 |
+|---|---|
+| `@deepseek-ai/dsh-memory-openviking` | 会话捕获 → 提交 OpenViking（:1933）→ 蒸馏成记忆 |
+| `@deepseek-ai/dsh-tool-memory` | `memory_write/recall/search/profile/forget` + `<memory_profile>` / `<memory_context>` 注入 |
+
+**恢复时要补两件仓库里没有的东西：**
+
+1. **插件包**（`node_modules` 不入库）。按 [deboerda/dsh-openviking-memory](https://github.com/deboerda/dsh-openviking-memory)
+   把三个包放进每个 profile 的 `node_modules`：`@deepseek-ai/dsh-memory-openviking`、`@deepseek-ai/dsh-tool-memory`、
+   `@openviking/sdk`。共享目录 `%DSH_HOME%\profiles\node_modules\` 或每个 profile 各放一份都行。
+   缺了会报 `cannot resolve package "@deepseek-ai/dsh-memory-openviking"`、`plugin tree failed to load`，DSH Desktop 起不来。
+2. **user key**：把 patch 里的 `apiKey: <OPENVIKING_USER_KEY>` 换成真实值（也在 `%USERPROFILE%\.openviking\ovcli.conf` 里）。
+   **故意不写进仓库。**
+
+后端服务（OpenViking :1933 + 本地 bge-m3 embedding :8089 + 蒸馏 VLM）用
+[deploy/](https://github.com/deboerda/dsh-openviking-memory/tree/main/deploy) 里的脚本启动，
+或直接跑 `deploy\make-shortcuts.ps1` 生成桌面「OpenViking记忆-启动 / -停止」快捷方式。
 
 ## Update this backup
 

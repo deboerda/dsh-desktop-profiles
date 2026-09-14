@@ -1,0 +1,18 @@
+{
+  "name": "dsh-win-job-runner-fix",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Restore the Windows subprocess Job runner by starting Host-side Electron-binary children as Node",
+  "license": "MIT",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

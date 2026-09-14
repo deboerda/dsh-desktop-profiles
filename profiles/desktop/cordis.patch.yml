@@ -1,4 +1,19 @@
 # Your patch layer for this dsh profile, applied after every bundle layer:
 # a top-level YAML array of loader patch entries (id-targeted config
 # overrides, disables, and insert lists; `!!js` expressions allowed).
-[]
+- insert:
+    - id: win-job-runner-fix
+      name: dsh-win-job-runner-fix
+
+# ── OpenViking 长记忆（dsh-memory-openviking + dsh-tool-memory，来自 deboerda/dsh-openviking-memory）──
+# 两个包装在共享目录 profiles/node_modules 下，不经 pnpm 依赖解析。
+- insert:
+    - id: memory-openviking
+      name: '@deepseek-ai/dsh-memory-openviking'
+      config:
+        baseUrl: http://127.0.0.1:1933
+        account: dsh
+        user: main
+        apiKey: <OPENVIKING_USER_KEY>
+    - id: tool-memory
+      name: '@deepseek-ai/dsh-tool-memory'
